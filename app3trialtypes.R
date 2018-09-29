@@ -6,27 +6,52 @@ app3trialtypes <- shinyApp(options=list(height = "1500px"),
     
     if(is.na(theColor)) {theColor <- '#E69F00'},
     
-    # remove 'input bar' from slider inputs
-    tags$style(HTML(".irs-bar, .irs-bar-edge{background: none; border: none}")),
-    # style slider handle and label:
-    tags$style(HTML(paste(".irs-single {background: ", theColor,"; ,size: 10} .irs-slider {top: 20px; width: 12px; height: 22px; border: 2px solid theColor;} .irs-slider:hover {background: #DDD;} "))),
+### everything from here to the next ### is all styling related and non essential code    
+    tags$body(
+      tags$link(rel="stylesheet", type = "text/css", href = "https://fonts.googleapis.com/css?family=Roboto")
+    ), # get custom font roboto
+    
+    tags$style(HTML("body {
+                    font-family: 'roboto';
+                    }")), # set custom font roboto
+        
+    tags$style(HTML("input[type='checkbox']{
+                    width: 9px !important;
+                    height: 9px !important;
+                    -webkit-appearance: none;
+                    -moz-appearance: none;
+                    -o-appearance: none;
+                    appearance:none;
+                    outline: 2px solid #999999;}")),  # Custom checkbox
+    
+    tags$style(HTML(paste("input[type='checkbox']:checked{
+                          background:", theColor, ";}"))), # Custom checkbox check
+    
+    tags$style(HTML(".irs-bar, .irs-bar-edge{background: none; border: none}")), # remove 'input bar' from slider inputs
+    
+    tags$style(HTML(paste(".irs-single {background: ", theColor,"; ,size: 10} .irs-slider {top: 20px; width: 12px; height: 22px; border: 2px solid theColor;} .irs-slider:hover {background: #DDD;} "))),    # style slider handle and label:
     
     tags$style(HTML("hr {margin-top: 5px; margin-bottom: 5px }")), # reduce margins (top/bottom) for the horizontal rule ( hr() )
     tags$style(HTML("br {margin-top: 3px; margin-bottom: 3px }")), # reduce margins (top/bottom) for the break ( br() )
-    tags$style(HTML("form.well {padding: 0px 15px}")), # reduce margins (top/bottom) for well panels (e.g. the sidebarPanel)
+    
+    tags$style(HTML("form.well {
+                    padding: 0px 25px 0px 20px; 
+                    background-color: transparent; 
+                    border: none;  
+                    box-shadow: none;}")), # redistribute margins and remove border and shadow for well panels (e.g. the sidebarPanel)
     
     tags$style(HTML(paste("#runAgain{background-color:", theColor,"; color: white; border-color: #DDD}"))), #style the 'runAgain' button (notice that this one is 'named' to match a specific button)
     tags$style(type="text/css", ".smallandgrayTxt {color: #999999; font-size: 12px; font-style: italic;}"), #create a custom text style to apply using "div(class=".smallandgrayTxt" "
-    
+### 
     
     br(),
     
     sidebarLayout(
-      sidebarPanel(style = "background-color: #ffffff; border-color: gray92 ; border-width: 2px", width = 3,
-                   h5("I-TRIC:"),
-                   tags$div(title= "specify intendend training contingeny separately for training trials (HS/BS)",
-                            sliderTextInput(inputId = "ITRIC", 
-                                            label = h6("Intended Training Ratio Incongruent/Congruent:"), 
+      sidebarPanel(width = 3,
+                   h4("ITR( in/co ):"),
+                   tags$div(title= "Congruent and incongruent refer to whether trials align with or oppose the intended direction of training",
+                            sliderTextInput(inputId = "ITRinco", 
+                                            label = h6(HTML("Intended Training Ratio <br> (incongruent/congruent):")),
                                             choices = c("100/0", "95/5", "90/10", "85/15", "80/20", "75/25", 
                                                         "70/30", "65/35", "60/40", "55/45", "50/50", 
                                                         "55/45", "40/60", "35/65", "30/70", "25/75", 
@@ -34,9 +59,7 @@ app3trialtypes <- shinyApp(options=list(height = "1500px"),
                                             selected = "50/50")),
                    br(),
                    h5("Pre-existing bias:"),
-                   tags$div(title= "50/50 = no bias 
-100/0 = absolute bias towards beneficial stimuli/desired response
-0/100 = absolute bias towards harmful stimuli/undesired response",
+                   tags$div(title= paste("50/50 = no bias", "100/0 = absolute bias towards beneficial stimuli/desired response", "0/100 = absolute bias towards harmful stimuli/undesired response",sep="\n"),
                             sliderTextInput(inputId = "ppbias", 
                                             label = h6("ratio of desired/undesired initial response tendencies:"), 
                                             choices = c("100% desired", "95/5", "90/10", "85/15", "80/10", "75/25", 
@@ -45,13 +68,11 @@ app3trialtypes <- shinyApp(options=list(height = "1500px"),
                                                         "20/80", "15/85", "10/90", "5/95", "100% undesired"),
                                             selected = "no bias")),
                    
-                  tags$div(title= "By default, the IRT sequence is created as a series of independent draws because it is a stochastic process not controlled by the researcher. Tick this box to make this a series of dependent trials, thereby removing variation in the totals of desired and undesired initial response tendencies",
-                            
-                  checkboxInput("ppbiasDependency",  div(class="smallandgrayTxt", "make consecutive draws of pp bias dependent"), value = F)),
+                   tags$div(title= "By default, the IRT sequence is drawn stochastically and independent from the trial type sequence. Tick this box to remove random variation in the totals of desired and undesired initial response tendencies and to distribute the response tendencies equally over the trial types.",
+                            checkboxInput("distributeBiasEqually",  div(class="smallandgrayTxt", "distribute response tendency equally over the trialtypes"), value = F)),
+                   br(),
                    
-                   #actionButton("runAgain", "again!"), 
-                   column(12, align="center",
-                          actionButton(inputId = "runAgain", label = "again", icon = icon("repeat")) ),
+                   actionButton(inputId = "runAgain", label = "again", icon = icon("repeat")),
                    
                    br(), br(), br(),
                    hr(),
@@ -70,7 +91,8 @@ app3trialtypes <- shinyApp(options=list(height = "1500px"),
       ),
       
       
-      mainPanel(width = 9,
+   mainPanel(width = 9,
+             fluidRow(h6("")),
                 fluidRow(
                   column(4, h6("random sequence of trial types:")),
                   column(4, h6("random sequence of initial response tendencies:")),
@@ -85,7 +107,7 @@ app3trialtypes <- shinyApp(options=list(height = "1500px"),
                   ),
                   
                   column(4,
-                         tags$div(title="because initial response tendency is not controlled by the researcher, it is determined for each trial independently and the resultant totals may vary",
+                         tags$div(title="because initial response tendency is not under experimental control, it is determined for each trial independently and the resultant totals may vary",
                                   plotOutput("RespTendencyMatrix", height = 200),
                                   htmlOutput("captionRespTendencyMatrix"))),
                   column(4,
@@ -96,16 +118,16 @@ app3trialtypes <- shinyApp(options=list(height = "1500px"),
                 hr(),
                 
                 fluidRow(
-                  tags$div(title="these plots summarize the proportion of trials that could weaken or consolidate the participant's initial response tendency",
-                           h5("Maximum experienced training ratio: "),
+                  tags$div(title="these plots summarize tthe MER(co/we): the Maximum Experienced Ratio (consolidating/weakening), i.e the poportion of trials that could consolidate or weaken the participant's initial response tendency",
+                           h4("MER(co/we):"),
                            column(6,
-                                  h6("ME-TRIC per stimulus class:"),
-                                  plotOutput("hiddenPropPlot", height = 200)),
+                                  plotOutput("hiddenPropPlot", height = 200),
+                                  htmlOutput("captionhiddenPropPlot")),
                            column(6,
-                                  h6("overall ME-TRIC:"),
-                                  plotOutput("METRICplot", height = 200))
-                  ))
-      ))),
+                                  plotOutput("MERcoweplot", height = 200),
+                                  htmlOutput("captionMERcoweplot"))))
+                  
+))),
 
 server <- 
   shinyServer(function(input, output) {
@@ -114,21 +136,20 @@ server <-
     require(reshape2)
     
     observe({
-      p_congruent <- as.numeric(sub(".*\\/", "", input$ITRIC))
-    #  HS_p_U <- as.numeric(sub("\\/.*", "", input$ppbias))/100
+      p_congruent <- as.numeric(sub(".*\\/", "", input$ITRinco))
       
-      HS_URtemp <- input$ppbias
+      URtemp <- input$ppbias
       
-      if (HS_URtemp == "100% desired") {
-        HS_p_U <- 0
-      } else if (HS_URtemp == "no bias") {
-        HS_p_U <- .5
-      } else if (HS_URtemp == "100% undesired") {
-        HS_p_U <- 1
-      } else {HS_p_U <- as.numeric(sub(".*\\/", "", HS_URtemp))/100 }
+      if (URtemp == "100% desired") {
+        p_UR <- 0
+      } else if (URtemp == "no bias") {
+        p_UR <- .5
+      } else if (URtemp == "100% undesired") {
+        p_UR <- 1
+      } else {p_UR <- as.numeric(sub(".*\\/", "", URtemp))/100 }
       
 
-      ppbiasDependency <- input$ppbiasDependency
+      distributeBiasEqually <- input$distributeBiasEqually
       
       HSBS_nTrials <- input$HSBS_nTrials
       NS_nTrials <- input$NS_nTrials
@@ -156,15 +177,14 @@ server <-
       names(mmHSBS)[names(mmHSBS)=="value"] <- "stim_class"
       
       mmHSBS$trialtype [mmHSBS$stim_class == "HSBS"] <-  
-        (sample(c(rep("C",  round(HSBS_nTrials *  p_congruent/100)), 
+        (sample(c(rep("C", round(HSBS_nTrials *  p_congruent/100)), 
                   rep("I", round(HSBS_nTrials * (100- p_congruent)/100)) ), replace = F))
       
       mmHSBS$trialtype [mmHSBS$stim_class == "NS"] <-  rep("N", NS_nTrials )
       
       mmHSBS$fontface [mmHSBS$stim_class == "NS"] <- "italic"
       mmHSBS$fontface [mmHSBS$stim_class == "HSBS"] <- "plain"
-      
-      mmHSBS <<- mmHSBS
+
       
       output$captionStimmclass <- renderText({ 
         paste0("<sub> training trials  </sub> ", 
@@ -195,23 +215,26 @@ server <-
       
       # generate sequence of participant initial response tendency:
       
-      if (ppbiasDependency == F) {
+      if (distributeBiasEqually == F) {
         
         mmHSBS$IRT [mmHSBS$stim_class == "HSBS"] <-
           sample(c("U", "D"), HSBS_nTrials, replace = T, 
-                 prob =(c(HS_p_U, 1- HS_p_U)))
+                 prob =(c(p_UR, 1- p_UR)))
         
         mmHSBS$IRT [mmHSBS$stim_class == "NS"] <-
           sample(c("n", "N"), NS_nTrials, replace = T, 
                  prob =(c(.5, .5)))
       } 
       
-      
-      if (ppbiasDependency == T)  {  
-        mmHSBS$IRT [mmHSBS$stim_class == "HSBS"] <-
-          sample(c(rep("U", round(HSBS_nTrials *  HS_p_U)), 
-                   rep("D", round(HSBS_nTrials * (1- HS_p_U)))), replace = F)
+      if (distributeBiasEqually == T)  {  
+        mmHSBS$IRT [mmHSBS$trialtype == "C"] <-
+          sample(c(rep("U", round(HSBS_nTrials * p_congruent/100 *  p_UR)), 
+                   rep("D", round(HSBS_nTrials * p_congruent/100  * (1- p_UR)))), replace = F)
         
+        mmHSBS$IRT [mmHSBS$trialtype == "I"] <-
+          sample(c(rep("U", round(HSBS_nTrials * (100-p_congruent)/100  *  p_UR)), 
+                   rep("D", round(HSBS_nTrials * (100-p_congruent)/100 * (1- p_UR)))), replace = F)
+
         mmHSBS$IRT [mmHSBS$stim_class == "NS"] <-
           rep(c("n", "N"), .5*NS_nTrials, replace = F)
         
@@ -260,23 +283,22 @@ server <-
       
       output$mergeplot <- renderPlot({
         
-        ggplot(na.omit(mmHSBS), aes(x = mmHSBS[,1][1:nTrials], y = mmHSBS[,2][1:nTrials], fill = combinedEffect[1:nTrials])) +
+        ggplot(mmHSBS, aes(x = mmHSBS[,1], y = mmHSBS[,2], fill = combinedEffect)) + 
           geom_tile(colour = "white") +
-         # geom_text(aes(label=combiCICBIAS, fontface = fontface), colour = "white") +
-          geom_text(aes(label=combiCICBIAS[1:nTrials]), color = "white") +
+          # geom_text(aes(label=combiCICBIAS, fontface = fontface), colour = "white") +
+          geom_text(aes(label=combiCICBIAS), color = "white") +
           scale_fill_manual(values=setNames(c("#999999", theColor), c("consolidate","weaken"))) + 
           coord_fixed()  +
           scale_y_reverse( lim=c(dimY+.5,.5), breaks = c(1:dimY), labels = c(1:dimY)*dimX- (dimX-1)) +  
           theme_void() + 
           theme(axis.text.y = element_text(colour = "Gray", size = 10, angle =0, debug = F),
                 legend.position = "none")
+        
       })
       
       output$captionMergeplot <- renderText({ 
         paste0("<sub>	<font color='#999999'> trial may consolidate initial response",
                "</sub> <br> <sup> <font color=", theColor, "> trial may weaken initial response") })
-      
-      mmHSBS <<- mmHSBS
       
       ###
       
@@ -300,7 +322,7 @@ server <-
       hiddenprops$freq [hiddenprops$effect ==  "consolidate response on NS"] <- 
         nrow(na.omit(mmHSBS [mmHSBS$stim_class == "NS" & mmHSBS$combinedEffect == "consolidate" ,]))
       
-      hiddenprops$percent <- round((hiddenprops$freq/sum(hiddenprops$freq))*100)
+      hiddenprops$percent <- round((hiddenprops$freq/sum(hiddenprops$freq))*100, 1)
       
       hiddenprops$percent [grepl("consolidate", hiddenprops$effect)] <- -1*hiddenprops$percent [grepl("consolidate", hiddenprops$effect)]
       
@@ -326,19 +348,22 @@ server <-
         
       })
       
+      output$captionhiddenPropPlot <- renderText({ 
+        paste0("<font color='#999999'> MER( co/", "<font color=", theColor,">we", "<font color='#999999'> ) per trial type") })
+      
       ###
       props <- NULL
       props$combinedEffect <- c("consolidate", "weaken")
       props <- as.data.frame(props)
       props$freq[props$combinedEffect== "consolidate"] <- nrow( mmHSBS[mmHSBS$combinedEffect == "consolidate",] )
       props$freq[props$combinedEffect== "weaken"] <- nrow( mmHSBS[mmHSBS$combinedEffect == "weaken",] )
-      props$percent <- round((props$freq/sum(props$freq))*100)
+      props$percent <- round((props$freq/sum(props$freq))*100, 1)
       props$percent[1] <- -1 * props$percent[1] 
       names(props)[1] <- "combinedEffect"
       props$onex <- 0
       
       
-      output$METRICplot <- renderPlot({
+      output$MERcoweplot <- renderPlot({
         
         ggplot(props, aes( x=onex, y=percent, fill = combinedEffect)) +
           scale_fill_manual(values=setNames(c("#999999", theColor), c("consolidate", "weaken"))) + 
@@ -360,8 +385,10 @@ server <-
             size = (0.35 * 14), colour = "#999999")
       })
       
+      output$captionMERcoweplot <- renderText({ 
+        paste0("<font color='#999999'>Maximum Experienced Ratio ( consolidating/", "<font color=", theColor,">weakening", "<font color='#999999'> )") })
     })
     
-    
   })
+
 )

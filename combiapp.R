@@ -11,6 +11,7 @@ library(shinyjs)
 library(shinyWidgets)
 library(DT)
 
+
 theColor <- "#E69F00" 
 #theColor <- "deepskyblue4" 
 
@@ -22,11 +23,35 @@ source('app4trialtypes.R', local = TRUE)
 
 # Define UI for application that draws a histogram
 ui <- fluidPage(
-  tags$style(HTML(".nav>li>a {color: #999999; }")), # set colour of tab titles font
- # tags$style(HTML(".nav-tabs >li.active>a, .nav-tabs >li.active>a:focus, .nav-tabs >li.active>a:hover { font-weight: bold}")), # set bold on title active tab
+
+  tags$body(
+    tags$link(rel="stylesheet", type = "text/css", href = "https://fonts.googleapis.com/css?family=Roboto")
+  ),
+  
+  tags$style(HTML("body {
+                  font-family: 'roboto';
+                  }")),
+    
+  tags$style(HTML(paste(".nav>li>a {
+                    color: #999999; font-size: 16px; 
+                    border-bottom: 1px solid", theColor, "; 
+                   }" ))), # set colour and size of tab titles font and the shadow line underneath
+
+  tags$style(HTML(paste(".nav-tabs > li > a:hover, .nav-tabs > li.active > a, .nav-tabs > li.active > a:focus,
+                  .nav-tabs > li.active > a:hover, .nav-tabs > li.active > a:focus:hover {
+                   border: none; background-color: transparent;
+              #    -webkit-box-shadow: inset 0 0px 0", theColor, ";
+              #    box-shadow: inset 0 -2px 0", theColor, ";
+                  color:", theColor, ";
+                   }"))), # set colour of tab titles active, hovering, focus 
+
+  tags$style(HTML(paste(".nav-tabs {
+    border-bottom: 1px solid", theColor, "; }"))),
+
+
 
   # Application title
-  titlePanel("On the interaction between pre-existing bias and training contingency in CBM"),
+  titlePanel(h2("on pre-existing bias affecting training contingency in CBM")),
   
   #tab
     tabsetPanel(
@@ -46,29 +71,29 @@ ui <- fluidPage(
 server <- function(input, output) {
   
   output$htmlText <- renderUI(HTML(paste(
-    "This shiny illustrates how pre-existing bias affects the experienced training contingency in hidden-contingency CBM tasks, as described in:", "<br><br>", em("Mechanics of contingency-based Cognitive Bias Modification: pre-existing bias affects potency of active CBM but not placebo training."), "<br><br>", "Preprint available: [url here]", "<br><br><br>", "The table below provides info on how to interpret the information in this app for different tasks:")))
+    "This shiny illustrates how pre-existing bias may affect the experienced training contingency in hidden-contingency CBM tasks, as described in:", "<br><br>", em("Mechanics of contingency-based Cognitive Bias Modification: pre-existing bias affects potency of active CBM but not placebo training."), "<br><br>", "Preprint available: [url here]", "<br><br><br>", "The table below provides info on how to interpret the information in this app for different tasks:")))
 
   ### table with info on interpretations for different tasks:
   tabdat <- NULL
   
   tabdat <- data.frame(matrix(vector(), 0, 10, 
-                              dimnames=list(c(), c("row", "task", "type", "stimclass", "trialtype_expl", "tt_C", "tt_I", "IRT_expl", "IRT_D", "IRT_U" ))),
+                              dimnames=list(c(), c("row", "task", "n_trialtypes", "stimclass", "trialtype_expl", "tt_C", "tt_I", "IRT_expl", "IRT_D", "IRT_U" ))),
                        stringsAsFactors=F)
   
-  tabdat[1,] <- c("1", "dot-probe training with a single bias dimension", "2-trialtypes", "training", "response cue on location", "beneficial stim", "harmful stim", "gaze at", "beneficial stim", "harmful stim")
-  tabdat[2,] <- c("2", "dot-probe with single dimension + neutral trials", "3-trialtypes", "training", "response cue on location", "beneficial stim", "harmful stim", "gaze at", "beneficial stim", "harmful stim")
+  tabdat[1,] <- c("1", "dot-probe training with a single bias dimension", "2", "training", "response cue on location", "beneficial stim", "harmful stim", "gaze at", "beneficial stim", "harmful stim")
+  tabdat[2,] <- c("2", "dot-probe with single dimension + neutral trials", "3", "training", "response cue on location", "beneficial stim", "harmful stim", "gaze at", "beneficial stim", "harmful stim")
   tabdat[3,] <- c("2", "", "", "neutral", "", "-", "-", "", "-", "-")
-  tabdat[4,] <- c("3", "dot-probe with two bias dimensions", "4-trialtypes", "HS", "response cue on location", "neutral stim", "harmful stim", "gaze at", "neutral stim", "harmful stim")
+  tabdat[4,] <- c("3", "dot-probe with two bias dimensions", "4", "HS", "response cue on location", "neutral stim", "harmful stim", "gaze at", "neutral stim", "harmful stim")
   tabdat[5,] <- c("3", "", "", "BS", "", "beneficial stim", "neutral stim", "", "beneficial stim", "neutral stim")
-  tabdat[6,] <- c("4", "Posner/single cueing training", "4-trialtypes", "HS", "stim cue location is", "opposite location", "stimulus location", "gaze", "away from stim", "towards stim")
+  tabdat[6,] <- c("4", "Posner/single cueing training", "4", "HS", "stim cue location is", "opposite location", "stimulus location", "gaze", "away from stim", "towards stim")
   tabdat[7,] <- c("4", "", "", "BS", "", "stimulus location", "opposite location", "", "towards stim", "away from stim")
-  tabdat[8,] <- c("5", "Approach Avoidance Training", "4 trialtypes", "HS", "response cue indicates to", "push", "pull", "tendency to", "push", "pull")
+  tabdat[8,] <- c("5", "Approach Avoidance Training", "4", "HS", "response cue indicates to", "push", "pull", "tendency to", "push", "pull")
   tabdat[9,] <- c("5", "", "", "BS", "", "pull", "push", "", "pull", "push")
-  tabdat[10,] <- c("6", "word–sentence association training", "4-trialtypes", "HS (cue word)", "positive feedback will be given for response:", "unrelated",	"related",	"initial interpretation is",	"unrelated",	"related")
+  tabdat[10,] <- c("6", "word–sentence association training", "4", "HS (cue word)", "positive feedback will be given for response:", "unrelated",	"related",	"initial interpretation is",	"unrelated",	"related")
   tabdat[11,] <- c("6", "", "", "BS (cue word)", "", "related", "unrelated", "", "related", "unrelated")
-  tabdat[12,] <- c("7", "go/no-go training", "4-trialtypes", "HS", "response cue indicates to", "nogo", "go", "tendency to", "nogo", "go")
+  tabdat[12,] <- c("7", "go/no-go training", "4", "HS", "response cue indicates to", "nogo", "go", "tendency to", "nogo", "go")
   tabdat[13,] <- c("7", "", "", "BS", "", "go", "nogo", "", "go", "nogo")
-  tabdat[14,] <- c("8", "stop-signal training", "4-trialtypes", "HS", "stop signal", "yes", "no", "initial tendency to", "stop", "go")
+  tabdat[14,] <- c("8", "stop-signal training", "4", "HS", "stop signal", "yes", "no", "initial tendency to", "stop", "go")
   tabdat[15,] <- c("8", "", "", "BS", "", "no", "yes", "", "go", "stop")
 
   
@@ -77,7 +102,7 @@ server <- function(input, output) {
       tr(
         th(class = 'dt-left', rowspan = 2, style="padding: 10px; border-bottom:1px solid #fff", ''),
         th(class = 'dt-left', rowspan = 2, style="padding: 10px; border-bottom:1px solid #fff", 'task'),
-        th(class = 'dt-left', rowspan = 2, style="padding: 10px; border-bottom:1px solid #fff", 'type'),
+        th(class = 'dt-left', rowspan = 2, style="padding: 10px; border-bottom:1px solid #fff", 'number of trial types'),
         th(class = 'dt-left', rowspan = 2, style="padding: 10px; border-bottom:1px solid #fff", 'trial class'),
         th(class = 'dt-left', rowspan = 1, colspan = 3, style="padding: 10px; border-bottom:0px solid #fff", 'interpretation of trialtype:'),
         th(class = 'dt-left', rowspan = 1, colspan = 3, style="padding: 10px; border-bottom:0px solid #fff", 'interpretation of initial response tendency:')),
