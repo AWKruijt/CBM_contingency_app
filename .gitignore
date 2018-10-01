@@ -1,5 +1,8 @@
-.Rproj.user
-.Rhistory
 .RData
--liwbook.Rhistory
 Rsconnect/
+.Rhistory
+.Rproj.user/**
+.Rproj.user/
+.Rproj.user
+-liwbook.Rhistory
+

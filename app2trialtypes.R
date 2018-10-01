@@ -1,12 +1,10 @@
 
 # Define UI 
 app2trialtypes <- shinyApp(options=list(height = "1500px"),
-  
+                           
 
   ui <- fluidPage( 
-
-    if(is.na(theColor)) {theColor <- '#E69F00'},
-
+    
 ### everything from here to the next ### is all styling related and non essential code    
      tags$body(
         tags$link(rel="stylesheet", type = "text/css", href = "https://fonts.googleapis.com/css?family=Roboto")
