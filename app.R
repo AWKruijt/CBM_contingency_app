@@ -73,7 +73,7 @@ ui <- fluidPage(
 server <- function(input, output) {
   
   output$htmlText <- renderUI(HTML(paste(
-    "This shiny illustrates how pre-existing bias may affect the experienced training contingency in hidden-contingency CBM tasks, as described in:", "<br><br>", em("Mechanics of contingency-based Cognitive Bias Modification: pre-existing bias affects potency of active CBM but not placebo training."), "<br><br>", "Preprint available: [url here]", "<br><br><br>", "The table below provides info on how to interpret the information in this app for different tasks:")))
+    "This shiny illustrates how pre-existing bias may affect the experienced training contingency in hidden-contingency CBM tasks, as described in:", "<br><br>", em("Mechanics of contingency-based Cognitive Bias Modification: pre-existing bias affects potency of active CBM but not placebo training."), "<br><br>", "Preprint available:", a("psyarxiv.com/scqf3", class = "web", href = "https://psyarxiv.com/scqf3"), "<br><br><br>", "The table below provides info on how to interpret the information in this app for different tasks:")))
 
   ### table with info on interpretations for different tasks:
   tabdat <- NULL
