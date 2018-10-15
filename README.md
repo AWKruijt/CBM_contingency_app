@@ -4,4 +4,6 @@ Shiny app accompanying a manuscript on pre-existing bias affecting (maximum) exp
 
 Run locally with command shiny::runGitHub("AWKruijt/CBM_contingency_app")
 
+Online version (with limited runtime) available here: https://awkruijt.shinyapps.io/mechanics-of-CBM-app/
+
 
